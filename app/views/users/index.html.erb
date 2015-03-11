@@ -1,0 +1,32 @@
+<h1>Transfers</h1>
+<h2>Users</h2>
+<%= link_to "Create user", new_user_path %>
+	
+	<table>
+		<thead>
+			<th>Name</th>
+			<th>Balance</th>
+		</thead>
+		<tbody>
+		<% @users.each do |user| %>
+			<tr>
+				<td><%= user.name %></td>
+				<td><%= user.balance %></td>
+			</tr>	
+
+		<% end %>
+		</tbody>
+	</table>
+
+<h2>Transfers</h2>
+	<table>
+		<thead>
+			<th>Sender</th>
+			<th>Amount</th>
+			<th>Receiver</th>
+			<th>Delete</th>
+		</thead>
+		<tbody>
+		
+		</tbody>
+	</table>
