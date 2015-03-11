@@ -19,13 +19,22 @@
 	</table>
 
 <h2>Transfers</h2>
+<%= link_to "Create transfer", new_transfer_path %>
 	<table>
 		<thead>
 			<th>Sender</th>
 			<th>Amount</th>
 			<th>Receiver</th>
-			<th>Delete</th>
+			<th>Update | Delete</th>
 		</thead>
+			<% @transfers.each do |transfer| %>
+				<tr>
+					<td><%= @users.find(transfer.sender_id).name %></td>
+					<td><%= transfer.amount %></td>
+					<td><%= @users.find(transfer.receiver_id).name %></td>
+					<td><%= link_to "Update", edit_transfer_path(transfer) %> | <%= link_to "Delete", transfer_path(transfer), method: :delete %></td>
+				</tr>
+			<% end %>
 		<tbody>
 		
 		</tbody>

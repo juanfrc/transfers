@@ -11,11 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150310203922) do
+ActiveRecord::Schema.define(version: 20150311205734) do
+
+  create_table "transfers", force: true do |t|
+    t.integer  "amount",      null: false
+    t.integer  "sender_id",   null: false
+    t.integer  "receiver_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: true do |t|
     t.string   "name"
-    t.string   "balance",    default: "50000"
+    t.integer  "balance",    limit: 255, default: 50000
     t.datetime "created_at"
     t.datetime "updated_at"
   end
