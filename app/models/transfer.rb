@@ -1,54 +1,33 @@
 class Transfer < ActiveRecord::Base
-	belongs_to :user
+	belongs_to :sender, class_name: "User", foreign_key: "sender_id"
+	belongs_to :receiver, class_name: "User", foreign_key: "receiver_id"
 	
 	validates_numericality_of :amount, only_integer: true, greater_than: 0
 
-	after_create :create_transfer_sender_receiver_balance
-	before_destroy :destroy_sender_receiver_balance
-	after_update :update_sender_receiver_balance
-
+	after_create :define_users, :create_transfer
+	before_destroy :define_users, :destroy_transfer
+	after_update :define_users, :update_transfer
 
 	protected
-		def create_transfer_sender_receiver_balance	
-			@transfer = self
 
-			@sender = User.find(@transfer.sender_id)
-			@sender_balance = @sender.balance
-			@sender_balance -= @transfer.amount
-			@sender.update(balance: @sender_balance)
-
-			@receiver = User.find(@transfer.receiver_id)
-			@receiver_balance = @receiver.balance
-			@receiver_balance += @transfer.amount
-			@receiver.update(balance: @receiver_balance)			
+		def define_users
+			@sender = self.sender
+			@receiver = self.receiver
+			@amount = self.amount
 		end
 
-		def destroy_sender_receiver_balance
-			@transfer = self
-
-			@sender = User.find(@transfer.sender_id)
-			@sender_balance = @sender.balance
-			@sender_balance += @transfer.amount
-			@sender.update(balance: @sender_balance)
-
-			@receiver = User.find(@transfer.receiver_id)
-			@receiver_balance = @receiver.balance
-			@receiver_balance -= @transfer.amount
-			@receiver.update(balance: @receiver_balance)
+		def create_transfer
+			@sender.update(balance: @sender.balance -= @amount)
+			@receiver.update(balance: @receiver.balance += @amount)			
 		end
 
-		def update_sender_receiver_balance
-			@transfer = self
+		def destroy_transfer
+			@sender.update(balance: @sender.balance += self.amount)
+			@receiver.update(balance: @receiver.balance -= self.amount)
+		end
 
-			@sender = User.find(@transfer.sender_id)
-			@sender_balance = @sender.balance
-			@sender_balance += @transfer.amount_was - @transfer.amount
-			@sender.update(balance: @sender_balance)
-
-			@receiver = User.find(@transfer.receiver_id)
-			@receiver_balance = @receiver.balance
-			@receiver_balance += @transfer.amount - @transfer.amount_was
-			@receiver.update(balance: @receiver_balance)
-
+		def update_transfer
+			@sender.update(balance: sender.balance += self.amount_was - @amount)
+			@receiver.update(balance: receiver.balance += @amount -self.amount_was)
 		end
 end
